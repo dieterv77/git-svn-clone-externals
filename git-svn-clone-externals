@@ -30,28 +30,9 @@ function do_clone()
 				call git svn fetch --all
 			)
 		else
-			tags="tags"
-			brch="branches"
-			branchpath=$(echo $branch|cut -f1 -d/)
-			echo $tags|grep $branchpath >/dev/null 2>&1 && tags=$branchpath
-			echo $brch|grep $branchpath >/dev/null 2>&1 && brch=$branchpath
-
-			if [ "$module" = "$remote_url" ]; then
-				# URL does not contains any trunk, branches or tags part, so we dont need
-				# additional options for git-svn
-				call git svn clone "$revision" "$module" "$local_directory"
-			else
-				call git svn clone "$revision" "$module" -T trunk -b $brch -t $tags "$local_directory"
-			fi
+                        call git svn clone "$revision" "$remote_url" "$local_directory"
 
 		fi
-		(
-			branch="$(echo ${branch}|sed 's,/$,,')"
-			if [ -n "$branch" ]; then
-				cd "$local_directory"
-				call git reset --hard $branch
-			fi
-		)
 	)
 }
 
@@ -102,7 +83,7 @@ do
 	[ -z "${words[*]}" ] && continue
 
 	local_directory="$(echo ${words[0]}|sed 's,^/,,')"
-	revision=""
+	revision="-r HEAD"
 	remote_url="${words[1]}"
 
     check_excluded=$(is_excluded $local_directory)
@@ -127,6 +108,7 @@ do
 
         dir=`dirname $local_directory`
         [ -d ".git_externals/$dir" ] || mkdir -p ".git_externals/$dir"
+
 
         do_clone "$revision" "$remote_url" "$local_directory" || exit
         do_link "$local_directory"
