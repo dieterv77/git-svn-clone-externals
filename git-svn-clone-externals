@@ -23,7 +23,6 @@ function do_clone()
 		branch=""
 	fi
  	(
-		cd .git_externals
 		if [ -d "$local_directory" ]; then
 			(
 				cd "$local_directory"
@@ -38,13 +37,12 @@ function do_clone()
 
 function do_link()
 {
+        curdir=`pwd`
 	dir="$1"
 	base="$(dirname $dir)"
 	(
-		mkdir -p "$base"
-		cd $base
-		rel=$(git rev-parse --show-cdup)
-		ln -sf ${rel}.git_externals/"$dir"
+		mkdir -p .git_externals/"$base"
+		ln -sf "$curdir"/"$dir" .git_externals/"$dir"
 	)
 }
 
