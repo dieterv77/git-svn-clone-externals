@@ -3,13 +3,11 @@
 toplevel_directory="$(git rev-parse --show-cdup)"
 [ -n "$toplevel_directory" ] && { echo "please run from the toplevel directory"; exit 1; }
 
-find -L .git_externals -type d -name .git | while read gitdir; do
-	dir=$(dirname "$gitdir")
-    if [ -d $dir ]; then
-	pushd $dir
-	echo $dir
-	git svn fetch
-	git svn rebase
+find .git_externals -type l | while read gitdir; do
+    if [ -d $gitdir ]; then
+	pushd $gitdir
+	echo "Dir to update:" $gitdir
+        svn update
 	popd
     fi
 done

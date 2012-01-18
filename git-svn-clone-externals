@@ -26,10 +26,10 @@ function do_clone()
 		if [ -d "$local_directory" ]; then
 			(
 				cd "$local_directory"
-				call git svn fetch --all
+				call svn update 
 			)
 		else
-                        call git svn clone "$revision" "$remote_url" "$local_directory"
+                        call svn checkout "$remote_url" "$local_directory"
 
 		fi
 	)
@@ -81,7 +81,6 @@ do
 	[ -z "${words[*]}" ] && continue
 
 	local_directory="$(echo ${words[0]}|sed 's,^/,,')"
-	revision="-r HEAD"
 	remote_url="${words[1]}"
 
     check_excluded=$(is_excluded $local_directory)
